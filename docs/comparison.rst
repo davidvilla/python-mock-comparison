@@ -615,9 +615,6 @@ Mock chained methods
     >>> assert_that(stub1.method1().method2().method3(1, 2), is_('some value'))
     >>> assert_that(spy.method3, doublex.called().with_args(1, 2))
 
-#    Spy.method3(1, 2)-> 'some value'
-#    Stub.method1()-> Stub.method2()-> Spy.method3(1, 2)-> 'some value'
-
 
 Stubbing out a context manager
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
