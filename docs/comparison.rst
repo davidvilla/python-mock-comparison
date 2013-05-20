@@ -13,6 +13,10 @@
     import dingus
     import fudge
     from mocker import Mocker
+    from contextlib import nested
+    import doublex
+    import hamcrest
+    from hamcrest import assert_that, is_
 
     def assertEqual(a, b):
         assert a == b, ("%r != %r" % (a, b))
@@ -41,8 +45,9 @@ The libraries are:
 * `Mocker <http://niemeyer.net/mocker>`_
 * `Dingus <http://pypi.python.org/pypi/dingus>`_
 * `fudge <http://farmdev.com/projects/fudge/>`_
+* `doublex <http://pypi.python.org/pypi/doublex>`_
 
-Some mocking tools are intentionally omitted: 
+Some mocking tools are intentionally omitted:
 
 * `python-mock <http://python-mock.sourceforge.net/>`_ (last release in 2005)
 * `pmock <http://pmock.sourceforge.net/>`_ (last release in 2004 and doesn't import in modern Pythons).
@@ -126,6 +131,16 @@ Simple fake object
     >>> assertEqual("calculated value", my_fake.some_method())
     >>> assertEqual("value", my_fake.some_attribute)
 
+    >>> # doublex
+    >>> with doublex.Stub() as stub:
+    ...     stub.some_method().returns("calculated value")
+    ...     stub.some_attribute = "value"
+    ...
+    Stub.some_method()-> 'calculated value'
+    >>> assert_that(stub.some_method(), is_("calculated value"))
+    >>> assert_that(stub.some_attribute, is_("value"))
+
+
 
 Simple mock
 ~~~~~~~~~~~
@@ -180,6 +195,15 @@ Simple mock
     ...
     AssertionError: fake:my_fake.some_method() was not called
 
+    >>> # doublex
+    >>> with doublex.Spy() as spy:
+    ...     spy.some_method().returns("value")
+    ...
+    Spy.some_method()-> 'value'
+    >>> assert_that(spy.some_method(), is_("value"))
+    >>> assert_that(spy.some_method, doublex.called().times(1))
+
+
 
 Creating partial mocks
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -225,6 +249,10 @@ Creating partial mocks
     ...     assertEqual("<fudge-value>", s.some_method())
     ...
 
+    >>> # doublex
+    >>> SomeObject.some_method = doublex.method_returning('value')
+    >>> assert_that(SomeObject.some_method(), is_('value'))
+
 
 Ensure calls are made in specific order
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -234,9 +262,9 @@ Ensure calls are made in specific order
     >>> # Mock
     >>> my_mock = mock.Mock(spec=SomeObject)
     >>> my_mock.method1()
-    <mock.Mock object at 0x...>
+    <Mock name='mock.method1()' id='...'>
     >>> my_mock.method2()
-    <mock.Mock object at 0x...>
+    <Mock name='mock.method2()' id='...'>
     >>> assertEqual(my_mock.method_calls, [('method1',), ('method2',)])
 
     >>> # Flexmock
@@ -303,6 +331,26 @@ Ensure calls are made in specific order
     ...
     AssertionError: Call #1 was fake:my_fake.method2(); Expected: #1 fake:my_fake.method1(), #2 fake:my_fake.method2(), end
 
+    >>> # doublex
+    >>> with doublex.Mock() as my_mock:
+    ...     my_mock.method1()
+    ...     my_mock.method2()
+    ...
+    Mock.method1()
+    Mock.method2()
+    >>> my_mock.method2()
+    >>> my_mock.method1()
+    >>> assert_that(my_mock, doublex.verify())
+    Traceback (most recent call last):
+    ...
+    AssertionError:
+    Expected: these calls:
+              Mock.m1()
+              Mock.m2()
+         but: calls that actually ocurred were:
+              Mock.m2()
+              Mock.m1()
+
 
 Raising exceptions
 ~~~~~~~~~~~~~~~~~~
@@ -352,6 +400,12 @@ Raising exceptions
     ...
     SomeException: message
 
+    >>> # doublex
+    >>> with doublex.Stub() as stub:
+    ...     stub.some_method().raises(SomeException('message'))
+    ...
+    >>> assertRaises(SomeException, stub.some_method)
+
 
 Override new instances of a class
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -395,6 +449,11 @@ Override new instances of a class
     ...
     >>> test()
 
+    >>> # doublex (wontdo)
+    >>> # Replacing production classes this way is dangerous and it may
+    >>> # produce unexpected side effects. Collaborators should be
+    >>> # injected (see DIP SOLID principle)
+
 
 Call the same method multiple times
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -404,9 +463,9 @@ Call the same method multiple times
     >>> # Mock
     >>> my_mock = mock.Mock()
     >>> my_mock.some_method()
-    <mock.Mock object at 0x...>
+    <Mock name='mock.some_method()' id='...'>
     >>> my_mock.some_method()
-    <mock.Mock object at 0x...>
+    <Mock name='mock.some_method()' id='...'>
     >>> assert my_mock.some_method.call_count >= 2
 
     >>> # Flexmock (verifies that the method gets called at least twice)
@@ -450,6 +509,27 @@ Call the same method multiple times
     Traceback (most recent call last):
     ...
     AssertionError: fake:my_fake.some_method() was called 1 time(s). Expected 2.
+
+    >>> # doublex (with spy)
+    >>> spy = doublex.Spy()
+    >>> spy.some_method()
+    >>> spy.some_method()
+    >>> assert_that(spy.some_method, doublex.called().times(hamcrest.greater_than(1)))
+
+    >>> # doublex (with mock)
+    >>> with doublex.Mock() as my_mock:
+    ...      my_mock.some_method().times(2)
+    ...
+    >>> my_mock.some_method()
+    >>> assert_that(my_mock, doublex.verify())
+    Traceback (most recent call last):
+    ...
+    AssertionError:
+    Expected: these calls:
+              Mock.some_method()
+              Mock.some_method()
+         but: calls that actually ocurred were:
+              Mock.some_method()
 
 
 Mock chained methods
@@ -519,6 +599,25 @@ Mock chained methods
     ...
     >>> test()
 
+    >>> # doublex (>= 1.6.8)
+    >>> stub1 = doublex.Stub()
+    >>> stub2 = doublex.Stub()
+    >>> spy = doublex.Spy()
+    >>> # python-2.7 does not require 'nested'
+    >>> with nested(stub1, stub2, spy):
+    ...     spy.method3(1, 2).returns('some value')
+    ...     stub2.method2().returns(spy)
+    ...     stub1.method1().returns(stub2)
+    ...
+    Spy.method3(1, 2)-> 'some value'
+    Stub.method2()-> <doublex.doubles.Spy object at 0x...>
+    Stub.method1()-> <doublex.doubles.Stub object at 0x...>
+    >>> assert_that(stub1.method1().method2().method3(1, 2), is_('some value'))
+    >>> assert_that(spy.method3, doublex.called().with_args(1, 2))
+
+#    Spy.method3(1, 2)-> 'some value'
+#    Stub.method1()-> Stub.method2()-> Spy.method3(1, 2)-> 'some value'
+
 
 Stubbing out a context manager
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -551,6 +650,17 @@ Stubbing out a context manager
     # >>> with my_fake:
     # ...     pass
     # ...
+
+    >>> # doublex (>= 1.6.8)
+    >>> spy = doublex.Spy()
+    >>> doublex.disable_context_setup(spy)
+    >>> with spy:
+    ...     pass
+    ...
+    >>> with spy:
+    ...     pass
+    ...
+    >>> assert_that(spy, doublex.entered_context().times(2))
 
 
 Mocking the builtin open used as a context manager
@@ -630,4 +740,3 @@ Mocking the builtin open used as a context manager
 * Extended for `flexmock and mock <http://has207.github.com/flexmock/compare.html>`_ by Herman Sheremetyev
 * Further edited for use in the `mock documentation <http://www.voidspace.org.uk/python/mock/compare.html>`_ by Michael Foord
 * Generalizd with doctests for all libraries by Gary Bernhardt and contributors
-
