@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python Mock Library Comparison v1.0 documentation</title>
+    <title>Python Mock Library Comparison 1.0 documentation</title>
+    
     <link rel="stylesheet" href="_static/python_mock_theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
@@ -22,13 +25,13 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="None" href="#" /> 
+    <link rel="top" title="None" href="index.html#document-index" /> 
   </head>
   <body>
     <div class="related">
       <h3>Navigation</h3>
       <ul>
-        <li><a href="#">Python Mock Library Comparison v1.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html#document-index">Python Mock Library Comparison 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -49,6 +52,7 @@ popular Python mocking libraries and frameworks.</p>
 <li><a class="reference external" href="http://niemeyer.net/mocker">Mocker</a></li>
 <li><a class="reference external" href="http://pypi.python.org/pypi/dingus">Dingus</a></li>
 <li><a class="reference external" href="http://farmdev.com/projects/fudge/">fudge</a></li>
+<li><a class="reference external" href="http://pypi.python.org/pypi/doublex">doublex</a></li>
 </ul>
 <p>Some mocking tools are intentionally omitted:</p>
 <ul class="simple">
@@ -126,6 +130,15 @@ or Dingus object and use it in any way you want with no up-front configuration.<
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">assertEqual</span><span class="p">(</span><span class="s">&quot;calculated value&quot;</span><span class="p">,</span> <span class="n">my_fake</span><span class="o">.</span><span class="n">some_method</span><span class="p">())</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">assertEqual</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">,</span> <span class="n">my_fake</span><span class="o">.</span><span class="n">some_attribute</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># doublex</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">doublex</span><span class="o">.</span><span class="n">Stub</span><span class="p">()</span> <span class="k">as</span> <span class="n">stub</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">stub</span><span class="o">.</span><span class="n">some_method</span><span class="p">()</span><span class="o">.</span><span class="n">returns</span><span class="p">(</span><span class="s">&quot;calculated value&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">stub</span><span class="o">.</span><span class="n">some_attribute</span> <span class="o">=</span> <span class="s">&quot;value&quot;</span>
+<span class="gp">...</span>
+<span class="go">Stub.some_method()-&gt; &#39;calculated value&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_that</span><span class="p">(</span><span class="n">stub</span><span class="o">.</span><span class="n">some_method</span><span class="p">(),</span> <span class="n">is_</span><span class="p">(</span><span class="s">&quot;calculated value&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_that</span><span class="p">(</span><span class="n">stub</span><span class="o">.</span><span class="n">some_attribute</span><span class="p">,</span> <span class="n">is_</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -178,6 +191,14 @@ or Dingus object and use it in any way you want with no up-front configuration.<
 <span class="gt">Traceback (most recent call last):</span>
 <span class="c">...</span>
 <span class="gr">AssertionError</span>: <span class="n">fake:my_fake.some_method() was not called</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># doublex</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">doublex</span><span class="o">.</span><span class="n">Spy</span><span class="p">()</span> <span class="k">as</span> <span class="n">spy</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">spy</span><span class="o">.</span><span class="n">some_method</span><span class="p">()</span><span class="o">.</span><span class="n">returns</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">Spy.some_method()-&gt; &#39;value&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_that</span><span class="p">(</span><span class="n">spy</span><span class="o">.</span><span class="n">some_method</span><span class="p">(),</span> <span class="n">is_</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_that</span><span class="p">(</span><span class="n">spy</span><span class="o">.</span><span class="n">some_method</span><span class="p">,</span> <span class="n">doublex</span><span class="o">.</span><span class="n">called</span><span class="p">()</span><span class="o">.</span><span class="n">times</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -221,6 +242,10 @@ or Dingus object and use it in any way you want with no up-front configuration.<
 <span class="gp">... </span>    <span class="n">s</span> <span class="o">=</span> <span class="n">SomeObject</span><span class="p">()</span>
 <span class="gp">... </span>    <span class="n">assertEqual</span><span class="p">(</span><span class="s">&quot;&lt;fudge-value&gt;&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">some_method</span><span class="p">())</span>
 <span class="gp">...</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># doublex</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">SomeObject</span><span class="o">.</span><span class="n">some_method</span> <span class="o">=</span> <span class="n">doublex</span><span class="o">.</span><span class="n">method_returning</span><span class="p">(</span><span class="s">&#39;value&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_that</span><span class="p">(</span><span class="n">SomeObject</span><span class="o">.</span><span class="n">some_method</span><span class="p">(),</span> <span class="n">is_</span><span class="p">(</span><span class="s">&#39;value&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -229,9 +254,9 @@ or Dingus object and use it in any way you want with no up-front configuration.<
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># Mock</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">my_mock</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">SomeObject</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">my_mock</span><span class="o">.</span><span class="n">method1</span><span class="p">()</span>
-<span class="go">&lt;mock.Mock object at 0x...&gt;</span>
+<span class="go">&lt;Mock name=&#39;mock.method1()&#39; id=&#39;...&#39;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">my_mock</span><span class="o">.</span><span class="n">method2</span><span class="p">()</span>
-<span class="go">&lt;mock.Mock object at 0x...&gt;</span>
+<span class="go">&lt;Mock name=&#39;mock.method2()&#39; id=&#39;...&#39;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">assertEqual</span><span class="p">(</span><span class="n">my_mock</span><span class="o">.</span><span class="n">method_calls</span><span class="p">,</span> <span class="p">[(</span><span class="s">&#39;method1&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;method2&#39;</span><span class="p">,)])</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="c"># Flexmock</span>
@@ -296,7 +321,27 @@ or Dingus object and use it in any way you want with no up-front configuration.<
 <span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">()</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="c">...</span>
-<span class="gr">AssertionError: Call #1 was fake:my_fake.method2(); Expected</span>: <span class="n">#1 fake:my_fake.method1(), #2 fake:my_fake.method2(), end</span>
+<span class="gr">AssertionError</span>: <span class="n">Call #1 was fake:my_fake.method2(); Expected: #1 fake:my_fake.method1(), #2 fake:my_fake.method2(), end</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># doublex</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">doublex</span><span class="o">.</span><span class="n">Mock</span><span class="p">()</span> <span class="k">as</span> <span class="n">my_mock</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">my_mock</span><span class="o">.</span><span class="n">method1</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="n">my_mock</span><span class="o">.</span><span class="n">method2</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="go">Mock.method1()</span>
+<span class="go">Mock.method2()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_mock</span><span class="o">.</span><span class="n">method2</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_mock</span><span class="o">.</span><span class="n">method1</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_that</span><span class="p">(</span><span class="n">my_mock</span><span class="p">,</span> <span class="n">doublex</span><span class="o">.</span><span class="n">verify</span><span class="p">())</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">AssertionError</span>:
+<span class="go">Expected: these calls:</span>
+<span class="go">          Mock.m1()</span>
+<span class="go">          Mock.m2()</span>
+<span class="go">     but: calls that actually ocurred were:</span>
+<span class="go">          Mock.m2()</span>
+<span class="go">          Mock.m1()</span>
 </pre></div>
 </div>
 </div>
@@ -344,6 +389,12 @@ or Dingus object and use it in any way you want with no up-front configuration.<
 <span class="gt">Traceback (most recent call last):</span>
 <span class="c">...</span>
 <span class="gr">SomeException</span>: <span class="n">message</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># doublex</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">doublex</span><span class="o">.</span><span class="n">Stub</span><span class="p">()</span> <span class="k">as</span> <span class="n">stub</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">stub</span><span class="o">.</span><span class="n">some_method</span><span class="p">()</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">SomeException</span><span class="p">(</span><span class="s">&#39;message&#39;</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assertRaises</span><span class="p">(</span><span class="n">SomeException</span><span class="p">,</span> <span class="n">stub</span><span class="o">.</span><span class="n">some_method</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -385,6 +436,11 @@ or Dingus object and use it in any way you want with no up-front configuration.<
 <span class="gp">... </span>    <span class="n">assertEqual</span><span class="p">(</span><span class="n">some_other_object</span><span class="p">,</span> <span class="n">somemodule</span><span class="o">.</span><span class="n">SomeClass</span><span class="p">())</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># doublex (wontdo)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Replacing production classes this way is dangerous and it may</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># produce unexpected side effects. Collaborators should be</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># injected (see DIP SOLID principle)</span>
 </pre></div>
 </div>
 </div>
@@ -393,9 +449,9 @@ or Dingus object and use it in any way you want with no up-front configuration.<
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># Mock</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">my_mock</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">Mock</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">my_mock</span><span class="o">.</span><span class="n">some_method</span><span class="p">()</span>
-<span class="go">&lt;mock.Mock object at 0x...&gt;</span>
+<span class="go">&lt;Mock name=&#39;mock.some_method()&#39; id=&#39;...&#39;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">my_mock</span><span class="o">.</span><span class="n">some_method</span><span class="p">()</span>
-<span class="go">&lt;mock.Mock object at 0x...&gt;</span>
+<span class="go">&lt;Mock name=&#39;mock.some_method()&#39; id=&#39;...&#39;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">my_mock</span><span class="o">.</span><span class="n">some_method</span><span class="o">.</span><span class="n">call_count</span> <span class="o">&gt;=</span> <span class="mi">2</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="c"># Flexmock (verifies that the method gets called at least twice)</span>
@@ -439,6 +495,27 @@ or Dingus object and use it in any way you want with no up-front configuration.<
 <span class="gt">Traceback (most recent call last):</span>
 <span class="c">...</span>
 <span class="gr">AssertionError</span>: <span class="n">fake:my_fake.some_method() was called 1 time(s). Expected 2.</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># doublex (with spy)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spy</span> <span class="o">=</span> <span class="n">doublex</span><span class="o">.</span><span class="n">Spy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spy</span><span class="o">.</span><span class="n">some_method</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spy</span><span class="o">.</span><span class="n">some_method</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_that</span><span class="p">(</span><span class="n">spy</span><span class="o">.</span><span class="n">some_method</span><span class="p">,</span> <span class="n">doublex</span><span class="o">.</span><span class="n">called</span><span class="p">()</span><span class="o">.</span><span class="n">times</span><span class="p">(</span><span class="n">hamcrest</span><span class="o">.</span><span class="n">greater_than</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># doublex (with mock)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">doublex</span><span class="o">.</span><span class="n">Mock</span><span class="p">()</span> <span class="k">as</span> <span class="n">my_mock</span><span class="p">:</span>
+<span class="gp">... </span>     <span class="n">my_mock</span><span class="o">.</span><span class="n">some_method</span><span class="p">()</span><span class="o">.</span><span class="n">times</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_mock</span><span class="o">.</span><span class="n">some_method</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_that</span><span class="p">(</span><span class="n">my_mock</span><span class="p">,</span> <span class="n">doublex</span><span class="o">.</span><span class="n">verify</span><span class="p">())</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">AssertionError</span>:
+<span class="go">Expected: these calls:</span>
+<span class="go">          Mock.some_method()</span>
+<span class="go">          Mock.some_method()</span>
+<span class="go">     but: calls that actually ocurred were:</span>
+<span class="go">          Mock.some_method()</span>
 </pre></div>
 </div>
 </div>
@@ -505,6 +582,22 @@ or Dingus object and use it in any way you want with no up-front configuration.<
 <span class="gp">... </span>    <span class="n">assertEqual</span><span class="p">(</span><span class="s">&#39;some value&#39;</span><span class="p">,</span> <span class="n">my_fake</span><span class="o">.</span><span class="n">method1</span><span class="p">()</span><span class="o">.</span><span class="n">method2</span><span class="p">()</span><span class="o">.</span><span class="n">method3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># doublex (&gt;= 1.6.8)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stub1</span> <span class="o">=</span> <span class="n">doublex</span><span class="o">.</span><span class="n">Stub</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stub2</span> <span class="o">=</span> <span class="n">doublex</span><span class="o">.</span><span class="n">Stub</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spy</span> <span class="o">=</span> <span class="n">doublex</span><span class="o">.</span><span class="n">Spy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># python-2.7 does not require &#39;nested&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">nested</span><span class="p">(</span><span class="n">stub1</span><span class="p">,</span> <span class="n">stub2</span><span class="p">,</span> <span class="n">spy</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">spy</span><span class="o">.</span><span class="n">method3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">returns</span><span class="p">(</span><span class="s">&#39;some value&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">stub2</span><span class="o">.</span><span class="n">method2</span><span class="p">()</span><span class="o">.</span><span class="n">returns</span><span class="p">(</span><span class="n">spy</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">stub1</span><span class="o">.</span><span class="n">method1</span><span class="p">()</span><span class="o">.</span><span class="n">returns</span><span class="p">(</span><span class="n">stub2</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">Spy.method3(1, 2)-&gt; &#39;some value&#39;</span>
+<span class="go">Stub.method2()-&gt; &lt;doublex.doubles.Spy object at 0x...&gt;</span>
+<span class="go">Stub.method1()-&gt; &lt;doublex.doubles.Stub object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_that</span><span class="p">(</span><span class="n">stub1</span><span class="o">.</span><span class="n">method1</span><span class="p">()</span><span class="o">.</span><span class="n">method2</span><span class="p">()</span><span class="o">.</span><span class="n">method3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">is_</span><span class="p">(</span><span class="s">&#39;some value&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_that</span><span class="p">(</span><span class="n">spy</span><span class="o">.</span><span class="n">method3</span><span class="p">,</span> <span class="n">doublex</span><span class="o">.</span><span class="n">called</span><span class="p">()</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -536,6 +629,17 @@ or Dingus object and use it in any way you want with no up-front configuration.<
 <span class="go"># &gt;&gt;&gt; with my_fake:</span>
 <span class="go"># ...     pass</span>
 <span class="go"># ...</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># doublex (&gt;= 1.6.8)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spy</span> <span class="o">=</span> <span class="n">doublex</span><span class="o">.</span><span class="n">Spy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">doublex</span><span class="o">.</span><span class="n">disable_context_setup</span><span class="p">(</span><span class="n">spy</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">spy</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">spy</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_that</span><span class="p">(</span><span class="n">spy</span><span class="p">,</span> <span class="n">doublex</span><span class="o">.</span><span class="n">entered_context</span><span class="p">()</span><span class="o">.</span><span class="n">times</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -627,7 +731,7 @@ or Dingus object and use it in any way you want with no up-front configuration.<
     <div class="related">
       <h3>Navigation</h3>
       <ul>
-        <li><a href="#">Python Mock Library Comparison v1.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html#document-index">Python Mock Library Comparison 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
